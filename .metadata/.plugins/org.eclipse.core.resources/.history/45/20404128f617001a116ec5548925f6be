@@ -1,0 +1,186 @@
+
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+
+
+	
+class pengsoo extends JFrame{
+		JFrame f = new JFrame();
+        JPanel panel = new JPanel();
+        MainPanel main = new MainPanel();
+        class MainPanel extends JPanel{
+	        ImageIcon image = new ImageIcon("펭수 사진/p1p1.jpg");
+	        Image img = image.getImage();
+	         public void paintComponent(Graphics g){
+	        	super.paintComponent(g);
+	        	g.drawImage(img,0,40, this);
+	        }
+        }
+        //JButton b1=new JButton(image);
+        //JLabel labelImage = new JLabel(image);	
+        public pengsoo(){	
+        //l1.setBounds(50,50,500,40);
+        //l1.setFont(new Font("나눔고딕", Font.BOLD,15));
+        setTitle("펭수");
+         setSize(500,350);
+         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+         //setLayout(null);
+         JPanel panel1=new JPanel();
+         JLabel l1= new JLabel("펭수가 치킨을 먹을 수 있게 연타로 시간내에 막대를 채우자!");
+         
+         main.add(l1);
+         
+         this.add(main); 
+         add(main);
+        //f.add(b1);
+        //f.add(panel);
+       
+        
+        
+        setVisible(true);
+        new TabAndThreadEx();
+        }
+       
+class MyFrame extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public MyFrame() {
+		setSize(400,600);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle(" vmf");
+		
+		JPanel panel = new JPanel();
+		JLabel label = new JLabel("안녕하세요");
+		
+		ImageIcon image = new ImageIcon("펭수 사진/pengsoo1.jpg");
+		JButton b1=new JButton(image);
+		//JLabel labelImage = new JLabel(image);
+		
+		panel.add(label);
+		panel.add(b1);
+		panel.setVisible(true);
+	}
+	
+}
+
+class Bar extends JLabel{
+	
+
+    /**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+	int barSize=0;
+    int maximumSize;
+    Bar(int maxBarSize){
+        this.maximumSize=maxBarSize;
+    }
+    public void paintComponent(Graphics a){
+        super.paintComponent(a);
+        a.setColor(Color.blue);
+        int width =(int)(((double)(this.getWidth()))/maximumSize*barSize);
+        if(width==0) return;
+        a.fillRect(0,0,width,this.getHeight());
+    }
+    synchronized void fill(){
+        if(barSize==maximumSize){
+            try{
+                this.wait();
+            }
+            catch(Exception e){
+                return;
+            }
+        }
+        barSize++;
+        barSize++;
+        this.repaint();
+        this.notify();
+    }
+    synchronized void consume(){
+        if(barSize==0){
+            try{
+                this.wait();
+            }
+            catch(Exception e){
+                return;
+            }
+        }
+        barSize--;
+        this.repaint();
+        this.notify();
+    }
+}
+
+class ConsumerThread extends Thread{
+    Bar con;
+    ConsumerThread(Bar con){
+        this.con=con;
+    }
+    public void run(){
+        while(true){
+            try{
+                sleep(200);
+                con.consume();
+            }
+            catch(Exception e){
+                return;
+            }
+        }
+    }
+}
+
+class TabAndThreadEx extends JFrame{
+    /**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+	Bar bar = new Bar(80);
+    TabAndThreadEx(){
+        this.setTitle("펭수가 치킨을 먹을 수 있게 아무키나 연타하기");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLayout(null);
+
+        bar.setBackground(Color.green);
+        bar.setLocation(30, 35);
+        bar.setOpaque(true);
+        bar.setSize(380,30);
+        this.add(bar);
+        this.addKeyListener(new KeyListener(){
+            @Override
+            public void keyPressed(KeyEvent ke) {
+                bar.fill();
+            }
+            @Override
+            public void keyTyped(KeyEvent ke) {
+            }
+            @Override
+            public void keyReleased(KeyEvent ke) {
+            }
+
+        });
+        this.setLocationRelativeTo(null);
+        this.setSize(450,300);
+        this.setVisible(true);
+        this.requestFocus();
+        ConsumerThread th = new ConsumerThread(bar);
+        th.start();
+    }
+}
+}
+
+public class pengsoo_fake {
+	public static void main(String[] args) {
+		
+		pengsoo b = new pengsoo();
+            
+    }
+
+}
+
+
